@@ -25,12 +25,15 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User register(User user) {
+		if(user == null) {
+			throw new IllegalArgumentException("Empty body");
+		}
 		log.info("About to register new user with username:" + user.getUsername());
 		
 		User existingUser = userRepository.findByUsername(user.getUsername());
 		
-		if(user == null || existingUser != null) {
-			throw new IllegalArgumentException("Empty body or user exists");
+		if(existingUser != null) {
+			throw new IllegalArgumentException("User already exists in DB");
 		}
 		
 		User newUser = new User();

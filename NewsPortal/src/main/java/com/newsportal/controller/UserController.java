@@ -1,6 +1,8 @@
 package com.newsportal.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,25 +22,42 @@ public class UserController {
 	
 	@PreAuthorize("permitAll()")
 	@RequestMapping(value = "/register" , method = RequestMethod.POST)
-	public User register(@RequestBody User user) {
-		return userService.register(user);	
+	public ResponseEntity<User> register(@RequestBody User user) {
+		try {
+			return ResponseEntity.ok(userService.register(user));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+		
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@RequestMapping(value = "/remove/{id}/" , method = RequestMethod.DELETE)
-	public String removeUser(@PathVariable("id") String id) {
-		return userService.removeUser(id);
+	public ResponseEntity<?> removeUser(@PathVariable("id") String id) {
+		try {
+			return ResponseEntity.ok(userService.removeUser(id));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		}
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
 	@RequestMapping(value = "/id/{id}/role/{role}/", method = RequestMethod.PUT)
-	public User addNewRole(@PathVariable("id")String id, @PathVariable("role") String role) {
-		return userService.addNewRole(id, role);
+	public ResponseEntity<User> addNewRole(@PathVariable("id")String id, @PathVariable("role") String role) {
+		try {
+			return ResponseEntity.ok(userService.addNewRole(id, role));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@RequestMapping(value = "/id/{id}/role/{role}/", method = RequestMethod.DELETE)
-	public User removeRole(@PathVariable("id")String id, @PathVariable("role") String role) {
-		return userService.removeRole(id, role);
+	public ResponseEntity<User> removeRole(@PathVariable("id")String id, @PathVariable("role") String role) {
+		try {
+			return ResponseEntity.ok(userService.removeRole(id, role));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
 	}
 }
